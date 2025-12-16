@@ -390,7 +390,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>🔗 FindMyGf-verify – Admin</h1>
+      <h1>🔗 Max-verify – Admin</h1>
       <div>
         <button class="small" onclick="logout()">🚪 Logout</button>
       </div>
@@ -729,7 +729,7 @@
         if (data.bypassAttempts && Array.isArray(data.bypassAttempts) && data.bypassAttempts.length > 0) {
           bypasses = data.bypassAttempts.map(b => `
             <div style="padding:16px;border-bottom:1px solid rgba(245,87,108,0.2);background:rgba(245,87,108,0.05)">
-              <div style="font-weight:700;margin-bottom:8px;">🚨 ${b.ip_address || '—'}</div>
+              <div style="font-weight:700;margin-bottom:8px;"> ${b.ip_address || '—'}</div>
               <div class="meta">${b.detected_at ? new Date(b.detected_at).toLocaleString() : '—'}</div>
               <div class="meta">🔗 Referrer: ${b.referrer || '—'}</div>
               <div class="meta" style="font-size:0.75rem;word-break:break-all;">UA: ${b.user_agent || '—'}</div>

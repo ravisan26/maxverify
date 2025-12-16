@@ -1,1 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FindMyGf-verify - Admin Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
+    :root {
+      --primary: #667eea;
+      --accent: #764ba2;
+      --bg: #0a0a0a;
+      --glass: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --text: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.6);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(45deg, #667eea, #764ba2, #f5576c, #4facfe);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      opacity: 0.15;
+      z-index: 0;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    header h1 {
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 2rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      background: var(--glass);
+      padding: 6px;
+      border-radius: 16px;
+      border: 1px solid var(--glass-border);
+    }
+
+    .tab {
+      padding: 12px 24px;
+      border-radius: 12px;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 0.95rem;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .tab:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      padding: 24px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card h2, .card h3 {
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    input::placeholder {
+      color: var(--text-muted);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    button {
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .small {
+      padding: 8px 16px;
+      font-size: 0.85rem;
+    }
+
+    .list-item {
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.3s ease;
+    }
+
+    .list-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(4px);
+    }
+
+    .meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .alert {
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(102, 126, 234, 0.1);
+      color: #a0b3ff;
+      margin-bottom: 16px;
+      border: 1px solid rgba(102, 126, 234, 0.3);
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .muted {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .footer {
+      margin-top: 24px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .footer code {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 999;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: rgba(20, 20, 20, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 32px;
+      border-radius: 20px;
+      max-width: 1000px;
+      width: 100%;
+      max-height: 90vh;
+      overflow: auto;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .modal-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--glass);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .tabs {
+        flex-direction: column;
+      }
+
+      .list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .button-group {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔗 FindMyGf-verify – Admin</h1>
+      <div>
+        <button class="small" onclick="logout()">🚪 Logout</button>
+      </div>
+    </header>
+
+    <div class="tabs" id="tabs">
+      <div class="tab active" data-tab="create" onclick="selectTab('create')">📝 Create</div>
+      <div class="tab" data-tab="analytics" onclick="selectTab('analytics')">📊 Analytics</div>
+      
+    </div>
+
+    <div id="main">
+      <div id="createView">
+        <div class="grid">
+          <div class="card">
+            <h2>Create Short Link</h2>
+            <div id="alert-container"></div>
+            <form id="shortenForm" onsubmit="shortenUrl(event)">
+              <label for="longUrl">Destination URL *</label>
+              <input id="longUrl" type="url" placeholder="https://example.com/landing" required>
+
+              <label for="partnerSelect">Monetization Partner</label>
+              <select id="partnerSelect">
+                <option value="">-- Select partner (optional) --</option>
+              </select>
+
+              <label for="customCode">Alias (optional)</label>
+              <input id="customCode" type="text" placeholder="customcode" pattern="[a-zA-Z0-9_-]*">
+
+              <label for="expiresAt">Expiry (optional)</label>
+              <input id="expiresAt" type="datetime-local">
+
+              <button type="submit">✨ Create Short Link</button>
+            </form>
+
+            <div style="margin-top:24px;">
+              <h3>Your Short Links</h3>
+              <div id="urlList" style="margin-top:16px"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>📋 Instructions</h3>
+            <p class="muted">Create short links and assign a monetization partner. Only visitors from the shorten url will be allowed access.</p>
+            <div style="margin-top:24px;">
+              <h4>Quick actions</h4>
+              <button onclick="loadUrls()" class="small" style="margin-top:12px;width:100%">🔄 Refresh Links</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="analyticsView" style="display:none">
+        <div class="card">
+          <h2>📊 Analytics Overview</h2>
+          <p class="muted">Click on any link to view detailed statistics including clicks and bypass attempts.</p>
+          <div style="margin-top:24px;">
+            <h3>All Links</h3>
+            <div id="analyticsUrlList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="settingsView" style="display:none">
+        <div class="grid">
+          <div class="card">
+            <h2>🤝 Partners</h2>
+            <form id="addPartnerForm" onsubmit="addPartner(event)">
+              <label>Partner Name</label>
+              <input id="partnerName" placeholder='e.g., "Arolinks"' required>
+              <label>Partner Domain</label>
+              <input id="partnerDomain" placeholder="https://arolinks.com/" required>
+              <button type="submit">➕ Add Partner</button>
+            </form>
+
+            <div style="margin-top:24px">
+              <h3>Existing Partners</h3>
+              <div id="partnerList" style="margin-top:16px"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>📝 Notes</h3>
+            <p class="muted">Domains are used to identify the shortner. Use full domain including protocol for clarity (e.g., <code>https://example.com/</code>).</p>
+            <div style="margin-top:24px;">
+              <h4>🔒 Security</h4>
+              <p class="muted">This provides extra protection against bypassed link access.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Admin Dashboard • Developed by <a href="https://t.me/RSCBots" target="_blank" style="color:#667eea;text-decoration:none;font-weight:600;">@RSCBots</a>
+    </div>
+  </div>
+
+  <div id="analyticsModal" class="modal" onclick="if(event.target === this) closeAnalytics()">
+    <div class="modal-content">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+        <h2>📊 Analytics Dashboard</h2>
+        <button onclick="closeAnalytics()" class="small">✕ Close</button>
+      </div>
+      <div id="analyticsContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '';
+    let adminPassword = null;
+
+    function checkAuth() {
+      adminPassword = sessionStorage.getItem('adminPassword');
+      if (!adminPassword) {
+        showAuthError();
+        return false;
+      }
+      return true;
+    }
+
+    function showAuthError() {
+      document.body.innerHTML = '<div style="padding:40px;color:white;font-family:system-ui;text-align:center;min-height:100vh;display:flex;align-items:center;justify-content:center;"><div><h1>🔒 Access Denied</h1><p style="margin-top:12px;opacity:0.8;">Go to <a href="/" style="color:#667eea;text-decoration:none;font-weight:600;">login page</a></p></div></div>';
+    }
+
+    function logout() {
+      sessionStorage.removeItem('adminPassword');
+      window.location.href = '/';
+    }
+
+    function selectTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+      document.getElementById('createView').style.display = tab === 'create' ? '' : 'none';
+      document.getElementById('analyticsView').style.display = tab === 'analytics' ? '' : 'none';
+      document.getElementById('settingsView').style.display = tab === 'settings' ? '' : 'none';
+
+      if (tab === 'create') {
+        loadPartnersForSelect();
+        loadUrls();
+      } else if (tab === 'analytics') {
+        loadAnalyticsList();
+      } else if (tab === 'settings') {
+        loadPartners();
+      }
+    }
+
+    function showAlert(message, type='success') {
+      const container = document.getElementById('alert-container');
+      container.innerHTML = `<div class="alert">${message}</div>`;
+      setTimeout(()=>{ container.innerHTML = ''; }, 4000);
+    }
+
+    async function loadPartnersForSelect() {
+      try {
+        const res = await fetch('/api/partners', { headers: { 'x-admin-password': adminPassword } });
+        if (res.status === 401) {
+          showAuthError();
+          return;
+        }
+        const partners = await res.json();
+        const sel = document.getElementById('partnerSelect');
+        sel.innerHTML = '<option value="">-- Select partner (optional) --</option>';
+        partners.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.textContent = `${p.name} (${p.domain})`;
+          sel.appendChild(opt);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadPartners() {
+      try {
+        const res = await fetch('/api/partners', { headers: { 'x-admin-password': adminPassword } });
+        if (res.status === 401) {
+          showAuthError();
+          return;
+        }
+        const partners = await res.json();
+        const list = document.getElementById('partnerList');
+        list.innerHTML = partners.map(p => `
+          <div class="list-item">
+            <div>
+              <div style="font-weight:700">${p.name}</div>
+              <div class="meta">${p.domain}</div>
+            </div>
+          </div>
+        `).join('') || '<div class="muted">No partners added yet.</div>';
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function addPartner(e) {
+      e.preventDefault();
+      const name = document.getElementById('partnerName').value.trim();
+      const domain = document.getElementById('partnerDomain').value.trim();
+      if (!name || !domain) return showAlert('Name & domain required', 'error');
+
+      try {
+        const res = await fetch('/api/partners', {
+          method:'POST',
+          headers: {'Content-Type':'application/json','x-admin-password': adminPassword},
+          body: JSON.stringify({ name, domain })
+        });
+        if (res.status === 401) {
+          showAuthError();
+          return;
+        }
+        if (!res.ok) {
+          const err = await res.json();
+          return showAlert(err.error || 'Failed to add partner','error');
+        }
+        document.getElementById('addPartnerForm').reset();
+        showAlert('✅ Partner added successfully!');
+        loadPartners();
+        loadPartnersForSelect();
+      } catch (err) {
+        console.error(err);
+        showAlert('Error adding partner','error');
+      }
+    }
+
+    async function loadUrls() {
+      try {
+        const res = await fetch('/api/urls', { headers: { 'x-admin-password': adminPassword } });
+        if (res.status === 401) {
+          showAuthError();
+          return;
+        }
+        const urls = await res.json();
+        const container = document.getElementById('urlList');
+        if (!urls || Object.keys(urls).length === 0) {
+          container.innerHTML = '<div class="muted">No short links yet. Create your first one!</div>';
+          return;
+        }
+        // Sort by creation date (newest first)
+        const sortedUrls = Object.entries(urls).sort((a, b) => {
+          const dateA = new Date(a[1].created);
+          const dateB = new Date(b[1].created);
+          return dateB - dateA; // Newest first
+        });
+
+        container.innerHTML = sortedUrls.map(([code, d]) => `
+          <div class="list-item" style="align-items:flex-start">
+            <div style="flex:1">
+              <div style="font-weight:700;margin-bottom:4px;">${window.location.origin}/${code}</div>
+              <div class="meta">→ ${d.url}</div>
+              <div class="meta">Partner: ${d.partnerName || '—'} ${d.expiresAt ? '• Expires: '+ new Date(d.expiresAt).toLocaleString() : ''}</div>
+            </div>
+            <div class="button-group" style="margin-left:16px">
+              <button class="small" onclick="copyUrl('${code}')">📋 Copy</button>
+              <button class="small" onclick="viewAnalytics('${code}')">📊 Stats</button>
+              <button class="small" onclick="deleteUrl('${code}')" style="background:linear-gradient(135deg,#f5576c,#f093fb)">🗑 Delete</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadAnalyticsList() {
+      try {
+        const res = await fetch('/api/urls', { headers: { 'x-admin-password': adminPassword } });
+        if (res.status === 401) {
+          showAuthError();
+          return;
+        }
+        const urls = await res.json();
+        const container = document.getElementById('analyticsUrlList');
+        if (!urls || Object.keys(urls).length === 0) {
+          container.innerHTML = '<div class="muted">No links to show.</div>';
+          return;
+        }
+        // Sort by creation date (newest first)
+        const sortedUrls = Object.entries(urls).sort((a, b) => {
+          const dateA = new Date(a[1].created);
+          const dateB = new Date(b[1].created);
+          return dateB - dateA; // Newest first
+        });
+
+        container.innerHTML = sortedUrls.map(([code, d]) => `
+          <div class="list-item" style="cursor:pointer;" onclick="viewAnalytics('${code}')">
+            <div style="flex:1">
+              <div style="font-weight:700">${window.location.origin}/${code}</div>
+              <div class="meta">${d.url}</div>
+              <div class="meta">👆 ${d.clicks || 0} clicks</div>
+            </div>
+            <div>
+              <button class="small" onclick="event.stopPropagation();viewAnalytics('${code}')">📊 View Details</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function viewAnalytics(code) {
+      try {
+        const res = await fetch('/api/analytics/' + code, { headers: { 'x-admin-password': adminPassword } });
+        if (res.status === 401) {
+          showAuthError();
+          return;
+        }
+        if (!res.ok) {
+          showAlert('Failed to load analytics: ' + res.status,'error');
+          return;
+        }
+        
+        const data = await res.json();
+        console.log('Analytics data:', data); // Debug log
+
+        const totalClicks = (data.recentClicks && Array.isArray(data.recentClicks)) ? data.recentClicks.length : 0;
+        const totalBypasses = (data.bypassAttempts && Array.isArray(data.bypassAttempts)) ? data.bypassAttempts.length : 0;
+
+        let clicks = '';
+        if (data.recentClicks && Array.isArray(data.recentClicks) && data.recentClicks.length > 0) {
+          clicks = data.recentClicks.map(c => `
+            <div style="padding:16px;border-bottom:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.02)">
+              <div style="font-weight:700;margin-bottom:8px;">📍 ${c.city || '—'}, ${c.country || '—'}</div>
+              <div class="meta">${c.clicked_at ? new Date(c.clicked_at).toLocaleString() : '—'}</div>
+              <div class="meta">💻 ${c.device || '—'} • ${c.browser || '—'} • ${c.os || '—'}</div>
+              <div class="meta">🔗 Referrer: ${c.referrer || 'Direct'}</div>
+              <div class="meta" style="font-size:0.75rem;">IP: ${c.ip_address || '—'}</div>
+            </div>
+          `).join('');
+        } else {
+          clicks = '<div class="muted" style="padding:16px">No clicks yet</div>';
+        }
+
+        let bypasses = '';
+        if (data.bypassAttempts && Array.isArray(data.bypassAttempts) && data.bypassAttempts.length > 0) {
+          bypasses = data.bypassAttempts.map(b => `
+            <div style="padding:16px;border-bottom:1px solid rgba(245,87,108,0.2);background:rgba(245,87,108,0.05)">
+              <div style="font-weight:700;margin-bottom:8px;">🚨 ${b.ip_address || '—'}</div>
+              <div class="meta">${b.detected_at ? new Date(b.detected_at).toLocaleString() : '—'}</div>
+              <div class="meta">🔗 Referrer: ${b.referrer || '—'}</div>
+              <div class="meta" style="font-size:0.75rem;word-break:break-all;">UA: ${b.user_agent || '—'}</div>
+            </div>
+          `).join('');
+        } else {
+          bypasses = '<div class="muted" style="padding:16px">No bypass attempts recorded</div>';
+        }
+
+        document.getElementById('analyticsContent').innerHTML = `
+          <div style="margin-bottom:16px;">
+            <h3 style="margin-bottom:8px;">📊 Link: <code style="background:rgba(255,255,255,0.1);padding:4px 8px;border-radius:6px;">${window.location.origin}/${code}</code></h3>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value">${totalClicks}</div>
+              <div class="stat-label">Total Clicks</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${totalBypasses}</div>
+              <div class="stat-label">Bypass Attempts</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px">
+            <div>
+              <h3 style="margin-bottom:16px">✅ Recent Clicks</h3>
+              <div style="border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;max-height:400px;overflow-y:auto">${clicks}</div>
+            </div>
+            <div>
+              <h3 style="margin-bottom:16px">⚠️ Bypass Attempts</h3>
+              <div style="border:1px solid rgba(245,87,108,0.2);border-radius:12px;overflow:hidden;max-height:400px;overflow-y:auto">${bypasses}</div>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('analyticsModal').classList.add('active');
+      } catch (err) {
+        console.error('Analytics error:', err);
+        showAlert('Error loading analytics: ' + err.message,'error');
+      }
+    }
+
+    function closeAnalytics() {
+      document.getElementById('analyticsModal').classList.remove('active');
+    }
+
+    function copyUrl(code) {
+      const shortUrl = `${window.location.origin}/${code}`;
+      navigator.clipboard.writeText(shortUrl).then(() => showAlert('✅ Copied to clipboard!'));
+    }
+
+    async function deleteUrl(code) {
+      if (!confirm('Are you sure you want to delete this link?')) return;
+      try {
+        const res = await fetch('/api/urls/' + code, { method:'DELETE', headers: { 'x-admin-password': adminPassword } });
+        if (res.status === 401) {
+          showAuthError();
+          return;
+        }
+        if (res.ok) { 
+          showAlert('✅ Link deleted successfully'); 
+          loadUrls(); 
+          loadAnalyticsList(); 
+        } else { 
+          showAlert('Failed to delete','error'); 
+        }
+      } catch (err) { 
+        console.error(err); 
+        showAlert('Error deleting','error'); 
+      }
+    }
+
+    async function shortenUrl(e) {
+      e.preventDefault();
+      const url = document.getElementById('longUrl').value.trim();
+      const customCode = document.getElementById('customCode').value.trim();
+      const partnerId = document.getElementById('partnerSelect').value || null;
+      const expiresAtInput = document.getElementById('expiresAt').value;
+      let expiresAt = null;
+      if (expiresAtInput) {
+        expiresAt = new Date(expiresAtInput).toISOString();
+      }
+
+      try {
+        const res = await fetch('/api/shorten', {
+          method:'POST',
+          headers: {'Content-Type':'application/json','x-admin-password': adminPassword},
+          body: JSON.stringify({ url, customCode: customCode || undefined, partnerId: partnerId || undefined, expiresAt: expiresAt || undefined })
+        });
+        const data = await res.json();
+        if (res.status === 401) {
+          showAuthError();
+          return;
+        }
+        if (!res.ok) return showAlert(data.error || 'Failed to create','error');
+        showAlert('✅ Short link created: ' + data.shortUrl);
+        document.getElementById('shortenForm').reset();
+        loadUrls();
+        loadAnalyticsList();
+      } catch (err) {
+        console.error(err);
+        showAlert('Error creating short link','error');
+      }
+    }
+
+    if (checkAuth()) {
+      selectTab('create');
+    } else {
+      showAuthError();
+    }
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAnalytics(); });
+  </script>
+</body>
+</html>

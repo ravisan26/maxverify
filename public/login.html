@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login - URL Shortener</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #0a0a0a;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated gradient background */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, #667eea, #764ba2, #f5576c, #4facfe);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Floating orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.6;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    .orb:nth-child(1) {
+      width: 300px;
+      height: 300px;
+      background: #667eea;
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .orb:nth-child(2) {
+      width: 400px;
+      height: 400px;
+      background: #764ba2;
+      bottom: -150px;
+      right: -150px;
+      animation-delay: 7s;
+    }
+
+    .orb:nth-child(3) {
+      width: 250px;
+      height: 250px;
+      background: #f5576c;
+      top: 50%;
+      right: -100px;
+      animation-delay: 14s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(50px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 50px) scale(0.9); }
+    }
+
+    .card {
+      position: relative;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      padding: 48px 40px;
+      border-radius: 24px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      width: 420px;
+      max-width: 90vw;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h2 {
+      color: #fff;
+      margin: 0 0 8px 0;
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.8);
+      text-align: center;
+      margin-bottom: 32px;
+      font-size: 0.95rem;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      opacity: 0.6;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px 16px 16px 48px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.85rem;
+    }
+
+    .footer a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity 0.3s;
+    }
+
+    .footer a:hover {
+      opacity: 0.8;
+    }
+
+    .error {
+      background: rgba(245, 87, 108, 0.2);
+      border: 1px solid rgba(245, 87, 108, 0.4);
+      color: #ff9999;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      text-align: center;
+      font-size: 0.9rem;
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="orb"></div>
+  <div class="orb"></div>
+  <div class="orb"></div>
+
+  <div class="card">
+    <h2>🔐 Admin Login</h2>
+    <p class="subtitle">Enter your Password to continue</p>
+    <div id="errorContainer"></div>
+    <form id="loginForm">
+      <div class="input-group">
+        <span class="input-icon">🔑</span>
+        <input id="password" type="password" placeholder="Enter admin password" required />
+      </div>
+      <button type="submit" id="loginBtn">Login to Dashboard</button>
+    </form>
+    <div class="footer">
+      Developed by <a href="https://t.me/RSCBots" target="_blank">@RSCBots</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const password = document.getElementById('password').value;
+      const loginBtn = document.getElementById('loginBtn');
+      const errorContainer = document.getElementById('errorContainer');
+      
+      // Clear previous errors
+      errorContainer.innerHTML = '';
+      
+      // Disable button during verification
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Verifying...';
+      
+      try {
+        // Verify password with server by trying to fetch URLs
+        const response = await fetch('/api/urls', {
+          headers: {
+            'x-admin-password': password
+          }
+        });
+        
+        if (response.status === 401) {
+          // Wrong password
+          errorContainer.innerHTML = '<div class="error">❌ Invalid password. Access denied.</div>';
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Login to Dashboard';
+          document.getElementById('password').value = '';
+          document.getElementById('password').focus();
+          return;
+        }
+        
+        if (!response.ok) {
+          throw new Error('Server error');
+        }
+        
+        // Password is correct - store it and redirect
+        sessionStorage.setItem('adminPassword', password);
+        window.location.href = '/admin';
+        
+      } catch (err) {
+        console.error('Login error:', err);
+        errorContainer.innerHTML = '<div class="error">⚠️ Connection error. Please try again.</div>';
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Login to Dashboard';
+      }
+    });
+  </script>
+</body>
+</html>
